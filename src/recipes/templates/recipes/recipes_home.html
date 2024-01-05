@@ -1,9 +1,32 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
-    <title>
-        Recipes Home
-    </title>
+    <title>{% block title %}Recipes Home{% endblock %}</title>
     <body>
-        Welcome to the recipes app.
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background: url("{% static 'recipes/images/background-food.jpg' %}") no-repeat center center fixed;
+                background-size: cover;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                color: black /* Set the text color to be visible against the background */
+            }
+    
+            div {
+                background-color: rgba(255, 253, 253, 0.7); /* Add a semi-transparent black background for better readability */
+                padding: 20px;
+                border-radius: 10px;
+            }
+        </style>
+        <div>
+            <h1>{% block page_title %}Welcome to the Recipes App!{% endblock %}</h1>
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>
