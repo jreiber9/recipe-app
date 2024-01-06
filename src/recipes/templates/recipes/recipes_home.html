@@ -26,6 +26,12 @@
         </style>
         <div>
             <h1>{% block page_title %}Welcome to the Recipes App!{% endblock %}</h1>
+            <br>
+            <br>
+            <a href ="{%url 'login' %}">  Login  </a>
+            <br>
+            <br>
+            <br>
             {% block content %}{% endblock %}
         </div>
     </body>
