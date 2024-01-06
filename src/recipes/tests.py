@@ -1,5 +1,8 @@
 from django.test import TestCase
 from .models import Recipe                   #to access Recipe model
+from django.urls import reverse
+from django.contrib.auth.models import User
+
 # Create your tests here.
 
 class RecipeModelTest(TestCase):
@@ -30,3 +33,55 @@ class RecipeModelTest(TestCase):
         # get_absolute_url() should take you to the detail page of recipe #1
         # and load the URL /recipe/list/1/
         self.assertEqual(recipe.get_absolute_url(), '/list/1')
+
+
+class RecipeListViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create a user for login
+        User.objects.create_user(username='testuser', password='testpass')
+
+    def test_recipe_list_view_redirects_if_not_logged_in(self):
+        response = self.client.get(reverse('recipes:list'))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/login/?next=/list/')
+
+    def test_recipe_list_view_loads_if_logged_in(self):
+        # Log in the user
+        self.client.login(username='testuser', password='testpass')
+
+        response = self.client.get(reverse('recipes:list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'recipes/all_recipes.html')
+
+
+class RecipeSearchFormTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create a test user for login
+        cls.user = User.objects.create_user(username='testuser', password='testpass')
+
+        # Create test recipes for searching
+        cls.recipe1 = Recipe.objects.create(
+            name='Test Recipe 1',
+            cooking_time=20,
+            ingredients='Ingredient 1, Ingredient 2',
+            description='This is a test recipe 1.'
+        )
+        cls.recipe2 = Recipe.objects.create(
+            name='Test Recipe 2',
+            cooking_time=30,
+            ingredients='Ingredient 3, Ingredient 4',
+            description='This is a test recipe 2.'
+        )
+
+    def test_search_form(self):
+        # Log in the test user
+        self.client.login(username='testuser', password='testpass')
+
+        # Perform a search using the form
+        response = self.client.post(reverse('recipes:records'), {'recipe_title': 'Test Recipe 1'})
+
+        # Check if the search result contains the expected recipe
+        self.assertContains(response, 'Test Recipe 1')
+        self.assertNotContains(response, 'Test Recipe 2')
