@@ -49,6 +49,23 @@
         a:hover {
             background-color: #f5f2f2;
         }
+
+        .about-button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .about-button:hover {
+            background-color: #555;
+        }
     </style>
 
     <div>
@@ -61,5 +78,9 @@
         <br>
         {% block content %}{% endblock %}
     </div>
+
+     <!-- Add the button for the "About Me" page -->
+     <a href="{% url 'recipes:about_me' %}" class="about-button">About Me</a>
 </body>
 </html>
+

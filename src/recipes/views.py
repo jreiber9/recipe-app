@@ -11,6 +11,13 @@ import pandas as pd
 def home(request):
     return render(request, 'recipes/recipes_home.html')
 
+def recipes_home(request):
+    return render(request, 'recipes/recipes_home.html')
+
+#about me page
+def about_me(request):
+    return render(request, 'recipes/about_me.html')
+
 class RecipeListView(LoginRequiredMixin, ListView):           #class-based view
    model = Recipe                         #specify model
    template_name = 'recipes/all_recipes.html'    #specify template 

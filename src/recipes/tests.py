@@ -2,6 +2,8 @@ from django.test import TestCase
 from .models import Recipe                   #to access Recipe model
 from django.urls import reverse
 from django.contrib.auth.models import User
+from .forms import RecipeSearchForm
+from .views import records
 
 # Create your tests here.
 
@@ -85,3 +87,45 @@ class RecipeSearchFormTest(TestCase):
         # Check if the search result contains the expected recipe
         self.assertContains(response, 'Test Recipe 1')
         self.assertNotContains(response, 'Test Recipe 2')
+
+
+class RecipeModelAdditionalTest(TestCase):
+    def setUp(self):
+        Recipe.objects.create(
+            recipe_id=2,
+            name='Another Test Recipe',
+            cooking_time=25,
+            ingredients='ingredient 3, ingredient 4',
+            description='This is another test recipe.'
+        )
+
+    def test_recipe_cooking_time(self):
+        test_recipe = Recipe.objects.get(recipe_id=2)
+        self.assertEqual(test_recipe.cooking_time, 25)
+
+
+class RecipeSearchFormTest(TestCase):
+    def test_recipe_search_form_valid_data(self):
+        form_data = {'recipe_title': 'Test Recipe', 'chart_type': '#1'}
+        form = RecipeSearchForm(data=form_data)
+
+        # Check if the form is valid
+        self.assertTrue(form.is_valid())
+
+class RecipeRecordsViewTest(TestCase):
+    def setUp(self):
+        # Create a user for login
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+
+    def test_records_view_loads(self):
+        # Log in the test user
+        self.client.login(username='testuser', password='testpass')
+
+        # Send a GET request to the records view
+        response = self.client.get('/records/')
+
+        # Check if the view returns a successful status code (200)
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the 'records.html' template is used in the response
+        self.assertTemplateUsed(response, 'recipes/records.html')
